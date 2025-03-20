@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <div class="container">
+        <form id="registerForm"action="/SETAP-coursework/frontend/landingpage/index.html" class="card">
+            <h2>Register</h2>
+            <p>Please fill in this form to create an account.</p>
+            
+            <input type="text" placeholder="enter your student username" name="student-username" id="student-username" required>
+            <span id="usernameError" class="error"></span>
+
+            <input type="email" placeholder="enter your student email" name="student-email" id="student-email" required>
+            <span id="emailError" class="error"></span>
+
+            <input type="password" placeholder="enter password" name="password" id="password" required>
+            <span id="passwordError" class="error"></span>
+
+            <input type="confirm-password" placeholder="confirm-password" name="confirm-password" id="confirm-password" required>
+            <span id="confirmPasswordError" class="error"></span>
+            
+            <button type="submit" class="register-button" href="/SETAP-coursework/frontend/loginpage/login.html">Register</button>
+            
+            
+           
+            
+            
+            <div class="container signin">
+                <p>Already have an account? <a class="register-link" href="/SETAP-coursework/frontend/loginpage/login.html">Log in</a></p>
+            </div>
+        </form>
+    </div>
+    <script src="register.js"></script>
+</body>
+</html>
