@@ -24,5 +24,9 @@ const roomRoutes = require('./routes/roomRoutes');
 app.use('/api', userRoutes);
 app.use('/api', roomRoutes);
 
+if (require.main === module) {
+    app.listen(3000, () => console.log('app listening on port 3000'));
+}
 
-app.listen(3000, () => console.log('app listening on port 3000'));
+
+module.exports = app;

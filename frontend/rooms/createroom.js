@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
         createRoomBtn.disabled = true;
       } else {
         roomNameError.textContent = "";
-        createRoomBtn.disabled = room.length === 0 || room.length < 3;
+        // createRoomBtn.disabled = room.length === 0 || room.length < 3;
+        createRoomBtn.disabled = false;
       }
     }
-
 
     roomNameInput.addEventListener("input", validateRoomName);
 

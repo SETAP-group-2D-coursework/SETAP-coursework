@@ -4,13 +4,16 @@ const { randomUUID } = require('crypto');
 const createRoom = (req,res) => {
     const { roomName } = req.body
 
-    if(!roomName ) return res.status(400).json({ message : "Room name is required to continue." });
+    if(!roomName) return res.status(400).json({ message : "Room name is required to continue." });
+
     const user_id = req.session.user_id;
     if(!user_id) return res.status(401).json({ message : "Unauthorized - please log in" });
     const inviteCode = randomUUID().slice(0, 6);
     pool.query('INSERT INTO rooms (user_id, room_name, invite_code) VALUES ($1, $2, $3) RETURNING *', 
         [user_id, roomName, inviteCode], (error, results) => {
-        if (error) return res.status(500).json({ message : error.message });
+        if (error) {
+            return res.status(500).json({ message : error.message })
+        }
         res.status(201).json({ message : "Room has successfully been created!", room: results.rows[0] });
     });
 };
@@ -23,7 +26,7 @@ const getRoomById = (req, res) => {
             return res.status(500).json({message : error.message});
         }
         if (results.rows.length === 0){
-            return res.status(404).json({message : "Room not found" });
+            return res.status(400).json({message : "Room not found" });
         }
         res.status(200).json(results.rows[0]);
     });
@@ -102,14 +105,25 @@ const Room = {
 
 const joinRoom = async (req, res) => {
     const { inviteCode } = req.body;
-    const userId = req.session.userId;
-    if(!userId || !inviteCode) return res.status(400).json({ message : "User ID and invite code required" });
+    console.log('InviteCode: ', inviteCode);
+    const user_id = req.session.user_id;
+    if(!user_id || !inviteCode) {
+        return res.status(400).json({ message : "User ID and invite code required" });
+    }
+
     try {
         const room = await Room.getByInviteCode(inviteCode);
-        if (!room) return res.status(404).json({ message : "Room not found" });
+        console.log('Room', room);
+        if (!room) {
+            return res.status(404).json({ message : "Room not found" });
+        }
+
         const isInRoom = await Room.checkUserInRoom(user_id, room.room_id);
-        if (isInRoom) return res.status(400).json({message : "User already in room!"})
-        await Room.addUserToRoom(user_id, room.room_id, room.roomName);
+        if (isInRoom) {
+            return res.status(400).json({message : "User already in room!"})
+        }
+
+        await Room.addUserToRoom(user_id, room.room_id, room.room_name);
         res.status(200).json({ message : "Joined room!"});
     } catch (error) {
         res.status(500).json({ message : error.message });
