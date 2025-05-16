@@ -112,6 +112,7 @@ const joinRoom = async (req, res) => {
     }
 
     try {
+
         const room = await Room.getByInviteCode(inviteCode);
         console.log('Room', room);
         if (!room) {

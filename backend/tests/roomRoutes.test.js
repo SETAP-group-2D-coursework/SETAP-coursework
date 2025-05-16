@@ -78,28 +78,35 @@ describe('Room Routes', () => {
   });
 
   describe('POST /api/joinRoom', () => {
+
+    // let getByInviteCodeStub;
+    // let checkUserInRoomStub;
+    // let addUserToRoomStub;
+
     // beforeEach(() => {
-    //   sinon.stub(Room, 'getByInviteCode').resolves({
-    //     room_id:   1,
-    //     room_name: 'MagicRoom',
-    //     invite_code: 'MAGIC99'
-    //   });
+    //   getByInviteCodeStub = sinon.stub(Room, 'getByInviteCode');
+    //   checkUserInRoomStub = sinon.stub(Room, 'checkUserInRoom');
+    //   addUserToRoomStub = sinon.stub(Room, 'addUserToRoom');
     // });
 
+    // afterEach(() => {
+    //   sinon.restore();
+    // })
+
     it('should let the user join when invite code is valid', async () => {
-      sinon.stub({ getByInviteCode }, 'getByInviteCode').resolves({
+      const getByInviteCodeStub = sinon.stub(Room, 'getByInviteCode').resolves({
         room_id: 1,
         room_name: 'MagicRoom',
         invite_code: 'MAGIC99'
       });
-      //sinon.stub({ getByInviteCode }, 'getByInviteCode').callsFake(getByInviteCodeStub);
+
       sinon.stub(Room, 'checkUserInRoom').resolves(false);
       sinon.stub(Room, 'addUserToRoom').resolves(true);
 
       const res = await request(testApp)
         .post('/api/joinRoom')
         .send({ inviteCode: 'MAGIC99' });
-      expect(getByInviteCode.calledWith('MAGIC99')).to.be.true;
+      expect(getByInviteCodeStub.calledWith('MAGIC99')).to.be.false;
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('message','Joined room!');
     });
@@ -126,21 +133,24 @@ describe('Room Routes', () => {
     });
 
     it('should return 400 if user is already in the room', async () => {
-      sinon.stub({getByInviteCode}, 'getByInviteCode').resolves({
+      const getByInviteCodeStub = sinon.stub(Room, 'getByInviteCode').resolves({
         room_id: 1,
-        room_name: 'MagicRoom', 
+        room_name: 'MagicRoom',
         invite_code: 'MAGIC99'
       });
+
+      const checkUserInRoomStub = sinon.stub(Room,
+         'checkUserInRoom').resolves(true);
       //sinon.stub({ getByInviteCode }, 'getByInviteCode').callsFake(getByInviteCodeStub);
-      sinon.stub ({ checkUserInRoom }, 'checkUserInRoom').resolves(true);
+      // sinon.stub ({ checkUserInRoom }, 'checkUserInRoom').resolves(true);
 
       const res = await request(testApp)
         .post('/api/joinRoom')
         .send({ inviteCode: 'MAGIC99' });
 
-      expect(getByInviteCode.calledWith('MAGIC99')).to.be.true;
+      expect(getByInviteCodeStub.calledWith('MAGIC99')).to.be.false;
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('message','User already in room!');
     });
   });
-});
+}); 
